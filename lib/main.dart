@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import './pages/auth.dart';
 import './pages/products.dart';
 import './pages/product.dart';
 import './pages/products_admin.dart';
