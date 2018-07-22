@@ -62,6 +62,7 @@ class ProductsModel extends Model {
     _products[_selectedProuctIndex] = updatedProduct;
     _selectedProuctIndex = null;
     notifyListeners();
+    _selectedProuctIndex = null;
   }
 
   void selectProduct(int index) {
