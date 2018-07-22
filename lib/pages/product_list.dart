@@ -31,7 +31,8 @@ class ProductListPage extends StatelessWidget {
               background: Container(color: Colors.red),
               onDismissed: (DismissDirection direction) {
                 if (direction == DismissDirection.endToStart) {
-                  model.deleteProduct(index);
+                  model.selectProduct(index);
+                  model.deleteProduct();
                 }
               },
               child: Column(
