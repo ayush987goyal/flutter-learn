@@ -63,6 +63,7 @@ class ProductCard extends StatelessWidget {
           Image.asset(product.image),
           _buildTitlePriceRow(),
           AddressTag('Union Sqaure, San Francisco'),
+          Text(product.userEmail),
           _buildActionButtons(context),
         ],
       ),
