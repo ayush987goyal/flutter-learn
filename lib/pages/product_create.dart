@@ -51,7 +51,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     );
   }
 
-  _submitForm() {
+  void _submitForm() {
     final Map<String, dynamic> product = {
       'title': _titleValue,
       'description': _descriptionValue,
