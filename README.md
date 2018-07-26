@@ -1,6 +1,6 @@
-# flutter_course
+# flutter_learn
 
-A new Flutter project.
+Hands on project while learning flutter.
 
 ## Getting Started
 
