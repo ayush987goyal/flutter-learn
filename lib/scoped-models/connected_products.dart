@@ -73,17 +73,39 @@ class ProductsModel extends ConnectedProductsModel {
     return _selProuctIndex == null ? null : _products[_selProuctIndex];
   }
 
-  void updateProduct(
+  Future<Null> updateProduct(
       String title, String description, double price, String image) {
-    final Product updatedProduct = Product(
-        title: title,
-        description: description,
-        price: price,
-        image: image,
-        userEmail: selectedProduct.userEmail,
-        userId: selectedProduct.userId);
-    _products[_selProuctIndex] = updatedProduct;
+    final Map<String, dynamic> updateData = {
+      'title': title,
+      'description': description,
+      'price': price,
+      'image':
+          'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
+      'userEmail': selectedProduct.userEmail,
+      'userId': selectedProduct.userId
+    };
+
+    _isLoading = true;
     notifyListeners();
+    return http
+        .put(
+            'https://flutter-products-6fdce.firebaseio.com/products/${selectedProduct.id}.json',
+            body: jsonEncode(updateData))
+        .then((http.Response response) {
+      final Product updatedProduct = Product(
+          id: selectedProduct.id,
+          title: title,
+          description: description,
+          price: price,
+          image:
+              'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
+          userEmail: selectedProduct.userEmail,
+          userId: selectedProduct.userId);
+
+      _products[_selProuctIndex] = updatedProduct;
+      _isLoading = false;
+      notifyListeners();
+    });
   }
 
   void deleteProduct() {

@@ -128,7 +128,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
                 .then((_) => setSelectedProduct(null));
           })
         : updateProduct(_formData['title'], _formData['description'],
-            _formData['price'], _formData['image']);
+            _formData['price'], _formData['image']).then((_) {
+            Navigator
+                .pushReplacementNamed(context, '/products')
+                .then((_) => setSelectedProduct(null));
+          });
   }
 
   @override
