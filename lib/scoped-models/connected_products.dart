@@ -10,6 +10,7 @@ class ConnectedProductsModel extends Model {
   List<Product> _products = [];
   int _selProuctIndex;
   User _authenticatedUser;
+  bool _isLoading = false;
 
   void addProduct(
       String title, String description, double price, String image) {
@@ -23,6 +24,7 @@ class ConnectedProductsModel extends Model {
       'userId': _authenticatedUser.id
     };
 
+    _isLoading = true;
     http
         .post('https://flutter-products-6fdce.firebaseio.com/products.json',
             body: json.encode(productData))
@@ -37,6 +39,7 @@ class ConnectedProductsModel extends Model {
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -87,6 +90,7 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   void fetchProducts() {
+    _isLoading = true;
     http
         .get('https://flutter-products-6fdce.firebaseio.com/products.json')
         .then((http.Response response) {
@@ -106,6 +110,7 @@ class ProductsModel extends ConnectedProductsModel {
       });
 
       _products = fetchedProductList;
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -140,5 +145,11 @@ class ProductsModel extends ConnectedProductsModel {
 class UserModel extends ConnectedProductsModel {
   void login(String email, String password) {
     _authenticatedUser = User(id: 'dsfwfdv', email: email, password: password);
+  }
+}
+
+class UtilityModel extends ConnectedProductsModel {
+  bool get isLoading {
+    return _isLoading;
   }
 }
