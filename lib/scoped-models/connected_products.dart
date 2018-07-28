@@ -84,6 +84,14 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
   }
 
+  void fetchProducts() {
+    http
+        .get('https://flutter-products-6fdce.firebaseio.com/products.json')
+        .then((http.Response response) {
+      print(jsonDecode(response.body));
+    });
+  }
+
   void toggleProductFavoriteStatus() {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
