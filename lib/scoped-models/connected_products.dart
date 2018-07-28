@@ -9,7 +9,7 @@ import '../models/user.dart';
 
 class ConnectedProductsModel extends Model {
   List<Product> _products = [];
-  int _selProuctIndex;
+  String _selProductId;
   User _authenticatedUser;
   bool _isLoading = false;
 
@@ -62,7 +62,13 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   int get selectedProductIndex {
-    return _selProuctIndex;
+    return _products.indexWhere((Product product) {
+      return product.id == _selProductId;
+    });
+  }
+
+  String get selectedProductId {
+    return _selProductId;
   }
 
   bool get displayFavoritesOnly {
@@ -70,7 +76,11 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   Product get selectedProduct {
-    return _selProuctIndex == null ? null : _products[_selProuctIndex];
+    return _selProductId == null
+        ? null
+        : _products.firstWhere((Product product) {
+            return product.id == _selProductId;
+          });
   }
 
   Future<Null> updateProduct(
@@ -102,7 +112,7 @@ class ProductsModel extends ConnectedProductsModel {
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
 
-      _products[_selProuctIndex] = updatedProduct;
+      _products[selectedProductIndex] = updatedProduct;
       _isLoading = false;
       notifyListeners();
     });
@@ -111,8 +121,8 @@ class ProductsModel extends ConnectedProductsModel {
   void deleteProduct() {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
-    _products.removeAt(_selProuctIndex);
-    _selProuctIndex = null;
+    _products.removeAt(selectedProductIndex);
+    _selProductId = null;
     notifyListeners();
     http
         .delete(
@@ -152,6 +162,7 @@ class ProductsModel extends ConnectedProductsModel {
       _products = fetchedProductList;
       _isLoading = false;
       notifyListeners();
+      _selProductId = null;
     });
   }
 
@@ -159,6 +170,7 @@ class ProductsModel extends ConnectedProductsModel {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
     final Product updatedProduct = Product(
+        id: selectedProduct.id,
         title: selectedProduct.title,
         description: selectedProduct.description,
         price: selectedProduct.price,
@@ -166,13 +178,14 @@ class ProductsModel extends ConnectedProductsModel {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteStatus);
-    _products[_selProuctIndex] = updatedProduct;
+
+    _products[selectedProductIndex] = updatedProduct;
     notifyListeners();
-    _selProuctIndex = null;
+    _selProductId = null;
   }
 
-  void selectProduct(int index) {
-    _selProuctIndex = index;
+  void selectProduct(String prouctId) {
+    _selProductId = prouctId;
     notifyListeners();
   }
 

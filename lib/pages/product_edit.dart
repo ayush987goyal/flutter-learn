@@ -68,7 +68,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  Widget _buildSubmitButton(Product product) {
+  Widget _buildSubmitButton() {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         return model.isLoading
@@ -76,8 +76,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
             : RaisedButton(
                 child: Text('Save'),
                 textColor: Colors.white,
-                onPressed: () => _submitForm(model.addProduct,
-                    model.updateProduct, model.selectProduct, product),
+                onPressed: () => _submitForm(
+                    model.addProduct,
+                    model.updateProduct,
+                    model.selectProduct,
+                    model.selectedProductIndex),
               );
       },
     );
@@ -105,7 +108,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
-              _buildSubmitButton(product),
+              _buildSubmitButton(),
             ],
           ),
         ),
@@ -113,14 +116,15 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm(Function addProduct, Function updateProduct,
-      Function setSelectedProduct, Product product) {
+  void _submitForm(
+      Function addProduct, Function updateProduct, Function setSelectedProduct,
+      [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) {
       return;
     }
 
     _formKey.currentState.save();
-    product == null
+    selectedProductIndex == -1
         ? addProduct(_formData['title'], _formData['description'],
             _formData['price'], _formData['image']).then((_) {
             Navigator
@@ -142,7 +146,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         final Widget pageContent =
             _buildPageContent(context, model.selectedProduct);
 
-        return model.selectedProductIndex == null
+        return model.selectedProductIndex == -1
             ? pageContent
             : Scaffold(
                 appBar: AppBar(
