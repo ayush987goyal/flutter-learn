@@ -14,7 +14,7 @@ class ConnectedProductsModel extends Model {
   bool _isLoading = false;
 
   Future<bool> addProduct(
-      String title, String description, double price, String image) {
+      String title, String description, double price, String image) async {
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -27,10 +27,11 @@ class ConnectedProductsModel extends Model {
 
     _isLoading = true;
     notifyListeners();
-    return http
-        .post('https://flutter-products-6fdce.firebaseio.com/products.json',
-            body: json.encode(productData))
-        .then((http.Response response) {
+    try {
+      final http.Response response = await http.post(
+          'https://flutter-products-6fdce.firebaseio.com/products.json',
+          body: json.encode(productData));
+
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
         notifyListeners();
@@ -49,11 +50,11 @@ class ConnectedProductsModel extends Model {
       _isLoading = false;
       notifyListeners();
       return true;
-    }).catchError((error) {
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
-    });
+    }
   }
 }
 
