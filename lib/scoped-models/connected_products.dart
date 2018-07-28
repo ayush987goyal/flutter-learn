@@ -12,6 +12,43 @@ class ConnectedProductsModel extends Model {
   String _selProductId;
   User _authenticatedUser;
   bool _isLoading = false;
+}
+
+class ProductsModel extends ConnectedProductsModel {
+  bool _showFavorites = false;
+
+  List<Product> get allProducts {
+    return List.from(_products);
+  }
+
+  List<Product> get displayedProducts {
+    if (_showFavorites) {
+      return _products.where((Product product) => product.isFavorite).toList();
+    }
+    return List.from(_products);
+  }
+
+  int get selectedProductIndex {
+    return _products.indexWhere((Product product) {
+      return product.id == _selProductId;
+    });
+  }
+
+  String get selectedProductId {
+    return _selProductId;
+  }
+
+  bool get displayFavoritesOnly {
+    return _showFavorites;
+  }
+
+  Product get selectedProduct {
+    return _selProductId == null
+        ? null
+        : _products.firstWhere((Product product) {
+            return product.id == _selProductId;
+          });
+  }
 
   Future<bool> addProduct(
       String title, String description, double price, String image) async {
@@ -55,43 +92,6 @@ class ConnectedProductsModel extends Model {
       notifyListeners();
       return false;
     }
-  }
-}
-
-class ProductsModel extends ConnectedProductsModel {
-  bool _showFavorites = false;
-
-  List<Product> get allProducts {
-    return List.from(_products);
-  }
-
-  List<Product> get displayedProducts {
-    if (_showFavorites) {
-      return _products.where((Product product) => product.isFavorite).toList();
-    }
-    return List.from(_products);
-  }
-
-  int get selectedProductIndex {
-    return _products.indexWhere((Product product) {
-      return product.id == _selProductId;
-    });
-  }
-
-  String get selectedProductId {
-    return _selProductId;
-  }
-
-  bool get displayFavoritesOnly {
-    return _showFavorites;
-  }
-
-  Product get selectedProduct {
-    return _selProductId == null
-        ? null
-        : _products.firstWhere((Product product) {
-            return product.id == _selProductId;
-          });
   }
 
   Future<bool> updateProduct(
