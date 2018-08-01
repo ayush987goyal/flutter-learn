@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
@@ -223,6 +224,10 @@ class ProductsModel extends ConnectedProductsModel {
 }
 
 class UserModel extends ConnectedProductsModel {
+  User get user {
+    return _authenticatedUser;
+  }
+
   Future<Map<String, dynamic>> authenticate(String email, String password,
       [AuthMode mode = AuthMode.Login]) async {
     _isLoading = true;
@@ -247,9 +252,14 @@ class UserModel extends ConnectedProductsModel {
       hasError = false;
       message = 'Authentication succeeded!';
       _authenticatedUser = new User(
-          id: responseData['localId'],
-          email: email,
-          token: responseData['idToken']);
+        id: responseData['localId'],
+        email: email,
+        token: responseData['idToken'],
+      );
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('userId', responseData['localId']);
+      prefs.setString('userEmail', email);
+      prefs.setString('token', responseData['idToken']);
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'This email was not found.';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
@@ -261,6 +271,21 @@ class UserModel extends ConnectedProductsModel {
     _isLoading = false;
     notifyListeners();
     return {'success': !hasError, 'message': message};
+  }
+
+  void autoAuthenticate() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token');
+    if (token != null) {
+      final String userId = prefs.getString('userId');
+      final String userEmail = prefs.getString('userEmail');
+      _authenticatedUser = new User(
+        id: userId,
+        email: userEmail,
+        token: token,
+      );
+      notifyListeners();
+    }
   }
 }
 
