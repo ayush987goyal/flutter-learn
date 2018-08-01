@@ -67,7 +67,7 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
     try {
       final http.Response response = await http.post(
-          'https://flutter-products-6fdce.firebaseio.com/products.json',
+          'https://flutter-products-6fdce.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
           body: json.encode(productData));
 
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -111,7 +111,7 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
     return http
         .put(
-            'https://flutter-products-6fdce.firebaseio.com/products/${selectedProduct.id}.json',
+            'https://flutter-products-6fdce.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
             body: jsonEncode(updateData))
         .then((http.Response response) {
       final Product updatedProduct = Product(
@@ -143,7 +143,7 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://flutter-products-6fdce.firebaseio.com/products/${deletedProductId}.json')
+            'https://flutter-products-6fdce.firebaseio.com/products/${deletedProductId}.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -159,7 +159,8 @@ class ProductsModel extends ConnectedProductsModel {
     _isLoading = true;
     notifyListeners();
     return http
-        .get('https://flutter-products-6fdce.firebaseio.com/products.json')
+        .get(
+            'https://flutter-products-6fdce.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = jsonDecode(response.body);
@@ -245,6 +246,10 @@ class UserModel extends ConnectedProductsModel {
     if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Authentication succeeded!';
+      _authenticatedUser = new User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'This email was not found.';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
