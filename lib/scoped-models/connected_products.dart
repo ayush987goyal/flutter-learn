@@ -235,8 +235,18 @@ class UserModel extends ConnectedProductsModel {
       'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyC-KR-wVa_LYGzp-Kxl0FwRHhbK0Mp6bpg',
       body: jsonEncode(authData),
     );
-    print(response);
-    return {'success': true, 'message': 'Authentication succeeded!'};
+    final Map<String, dynamic> responseData = jsonDecode(response.body);
+    bool hasError = true;
+    String message = 'Something went wrong.';
+
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication succeeded!';
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'This email already exists.';
+    }
+
+    return {'success': !hasError, 'message': message};
   }
 }
 

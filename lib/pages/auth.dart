@@ -88,9 +88,6 @@ class _AuthPageState extends State<AuthPage> {
           return 'Password do not match.';
         }
       },
-      onSaved: (String value) {
-        _formData['password'] = value;
-      },
     );
   }
 
@@ -118,6 +115,23 @@ class _AuthPageState extends State<AuthPage> {
           await signup(_formData['email'], _formData['password']);
       if (successInformation['success']) {
         Navigator.pushReplacementNamed(context, '/products');
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('An error occured!'),
+                content: Text(successInformation['message']),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       }
     }
   }
@@ -178,7 +192,8 @@ class _AuthPageState extends State<AuthPage> {
                           MainModel model) {
                         return RaisedButton(
                           textColor: Colors.white,
-                          child: Text('Login'),
+                          child: Text(
+                              '${_authMode == AuthMode.Login ? 'Login' : 'Signup'}'),
                           onPressed: () =>
                               _submitForm(model.login, model.signup),
                         );
