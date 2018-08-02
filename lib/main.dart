@@ -11,7 +11,7 @@ import './scoped-models/main.dart';
 import './models/product.dart';
 
 void main() {
-  MapView.setApiKey(AppConfig.mapsAPI);
+  // MapView.setApiKey(AppConfig.mapsAPI); //! Required for iOS
   runApp(MyApp());
 }
 
