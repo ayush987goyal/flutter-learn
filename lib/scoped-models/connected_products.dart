@@ -10,6 +10,7 @@ import '../app_config.dart';
 import '../models/product.dart';
 import '../models/user.dart';
 import '../models/auth.dart';
+import '../models/location_data.dart';
 
 class ConnectedProductsModel extends Model {
   List<Product> _products = [];
@@ -54,8 +55,8 @@ class ProductsModel extends ConnectedProductsModel {
           });
   }
 
-  Future<bool> addProduct(
-      String title, String description, double price, String image) async {
+  Future<bool> addProduct(String title, String description, double price,
+      String image, LocationData locData) async {
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -63,7 +64,10 @@ class ProductsModel extends ConnectedProductsModel {
       'image':
           'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
       'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userId': _authenticatedUser.id,
+      'loc_lat': locData.latitude,
+      'loc_lng': locData.longitude,
+      'loc_address': locData.address
     };
 
     _isLoading = true;

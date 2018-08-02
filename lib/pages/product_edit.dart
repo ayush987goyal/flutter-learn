@@ -5,6 +5,7 @@ import '../widgets/form_inputs/location.dart';
 
 import '../models/product.dart';
 import '../scoped-models/main.dart';
+import '../models/location_data.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -18,7 +19,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': null
+    'image': null,
+    'location': null
   };
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
@@ -110,7 +112,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
-              LocationInput(),
+              LocationInput(_setLocation),
               SizedBox(
                 height: 10.0,
               ),
@@ -122,6 +124,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
+  void _setLocation(LocationData locData) {
+    _formData['location'] = locData;
+  }
+
   void _submitForm(
       Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
@@ -131,8 +137,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
     _formKey.currentState.save();
     selectedProductIndex == -1
-        ? addProduct(_formData['title'], _formData['description'],
-            _formData['price'], _formData['image']).then((bool success) {
+        ? addProduct(
+            _formData['title'],
+            _formData['description'],
+            _formData['price'],
+            _formData['image'],
+            _formData['location'],
+          ).then((bool success) {
             if (success) {
               Navigator
                   .pushReplacementNamed(context, '/')
@@ -154,8 +165,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
                   });
             }
           })
-        : updateProduct(_formData['title'], _formData['description'],
-            _formData['price'], _formData['image']).then((_) {
+        : updateProduct(
+            _formData['title'],
+            _formData['description'],
+            _formData['price'],
+            _formData['image'],
+          ).then((_) {
             Navigator
                 .pushReplacementNamed(context, '/')
                 .then((_) => setSelectedProduct(null));
