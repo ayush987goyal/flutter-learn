@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/subjects.dart';
 
+import '../app_config.dart';
 import '../models/product.dart';
 import '../models/user.dart';
 import '../models/auth.dart';
@@ -284,8 +285,8 @@ class UserModel extends ConnectedProductsModel {
       'returnSecureToken': true
     };
     String endpoint = mode == AuthMode.Login
-        ? 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyC-KR-wVa_LYGzp-Kxl0FwRHhbK0Mp6bpg'
-        : 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyC-KR-wVa_LYGzp-Kxl0FwRHhbK0Mp6bpg';
+        ? 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${AppConfig.authAPI}'
+        : 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=${AppConfig.authAPI}';
 
     final http.Response response =
         await http.post(endpoint, body: jsonEncode(authData));
