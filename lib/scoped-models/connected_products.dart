@@ -174,13 +174,18 @@ class ProductsModel extends ConnectedProductsModel {
 
       productListData.forEach((String productId, dynamic productData) {
         final Product newProduct = Product(
-            id: productId,
-            title: productData['title'],
-            description: productData['description'],
-            price: productData['price'],
-            image: productData['image'],
-            userEmail: productData['userEmail'],
-            userId: productData['userId']);
+          id: productId,
+          title: productData['title'],
+          description: productData['description'],
+          price: productData['price'],
+          image: productData['image'],
+          userEmail: productData['userEmail'],
+          userId: productData['userId'],
+          isFavorite: productData['wishlistUsers'] == null
+              ? false
+              : (productData['wishlistUsers'] as Map<dynamic, dynamic>)
+                  .containsKey(_authenticatedUser.id),
+        );
         fetchedProductList.add(newProduct);
       });
 
