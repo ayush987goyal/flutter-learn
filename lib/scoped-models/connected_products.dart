@@ -103,8 +103,8 @@ class ProductsModel extends ConnectedProductsModel {
     }
   }
 
-  Future<bool> updateProduct(
-      String title, String description, double price, String image) {
+  Future<bool> updateProduct(String title, String description, double price,
+      String image, LocationData locData) {
     final Map<String, dynamic> updateData = {
       'title': title,
       'description': description,
@@ -112,7 +112,10 @@ class ProductsModel extends ConnectedProductsModel {
       'image':
           'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
       'userEmail': selectedProduct.userEmail,
-      'userId': selectedProduct.userId
+      'userId': selectedProduct.userId,
+      'loc_lat': locData.latitude,
+      'loc_lng': locData.longitude,
+      'loc_address': locData.address
     };
 
     _isLoading = true;
@@ -123,14 +126,16 @@ class ProductsModel extends ConnectedProductsModel {
             body: jsonEncode(updateData))
         .then((http.Response response) {
       final Product updatedProduct = Product(
-          id: selectedProduct.id,
-          title: title,
-          description: description,
-          price: price,
-          image:
-              'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
-          userEmail: selectedProduct.userEmail,
-          userId: selectedProduct.userId);
+        id: selectedProduct.id,
+        title: title,
+        description: description,
+        price: price,
+        location: locData,
+        image:
+            'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
+        userEmail: selectedProduct.userEmail,
+        userId: selectedProduct.userId,
+      );
 
       _products[selectedProductIndex] = updatedProduct;
       _isLoading = false;
@@ -225,6 +230,7 @@ class ProductsModel extends ConnectedProductsModel {
       description: selectedProduct.description,
       price: selectedProduct.price,
       image: selectedProduct.image,
+      location: selectedProduct.location,
       userEmail: selectedProduct.userEmail,
       userId: selectedProduct.userId,
       isFavorite: newFavoriteStatus,
@@ -250,6 +256,7 @@ class ProductsModel extends ConnectedProductsModel {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: !newFavoriteStatus,
