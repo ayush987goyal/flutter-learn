@@ -112,7 +112,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
-              LocationInput(_setLocation),
+              LocationInput(_setLocation, product),
               SizedBox(
                 height: 10.0,
               ),

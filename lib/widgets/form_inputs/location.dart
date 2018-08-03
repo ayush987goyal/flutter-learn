@@ -6,11 +6,13 @@ import 'package:http/http.dart' as http;
 
 import '../../app_config.dart';
 import '../../models/location_data.dart';
+import '../../models/product.dart';
 
 class LocationInput extends StatefulWidget {
   final Function setLocation;
+  final Product product;
 
-  LocationInput(this.setLocation);
+  LocationInput(this.setLocation, this.product);
 
   @override
   State<StatefulWidget> createState() {
@@ -27,6 +29,9 @@ class _LocationInputState extends State<LocationInput> {
   @override
   void initState() {
     _addressInputFocusNode.addListener(_updateLocation);
+    if (widget.product != null) {
+      getStaticMap(widget.product.location.address);
+    }
     super.initState();
   }
 
@@ -44,20 +49,26 @@ class _LocationInputState extends State<LocationInput> {
       widget.setLocation(null);
       return;
     }
-    final Uri uri = Uri.https(
-      'maps.googleapis.com',
-      '/maps/api/geocode/json',
-      {'address': address, 'key': AppConfig.mapsAPI},
-    );
-    final http.Response response = await http.get(uri);
-    final decodedResponse = jsonDecode(response.body);
-    final formattedAddress = decodedResponse['results'][0]['formatted_address'];
-    final coords = decodedResponse['results'][0]['geometry']['location'];
-    _locationData = LocationData(
-      address: formattedAddress,
-      latitude: coords['lat'],
-      longitude: coords['lng'],
-    );
+
+    if (widget.product == null) {
+      final Uri uri = Uri.https(
+        'maps.googleapis.com',
+        '/maps/api/geocode/json',
+        {'address': address, 'key': AppConfig.mapsAPI},
+      );
+      final http.Response response = await http.get(uri);
+      final decodedResponse = jsonDecode(response.body);
+      final formattedAddress =
+          decodedResponse['results'][0]['formatted_address'];
+      final coords = decodedResponse['results'][0]['geometry']['location'];
+      _locationData = LocationData(
+        address: formattedAddress,
+        latitude: coords['lat'],
+        longitude: coords['lng'],
+      );
+    } else {
+      _locationData = widget.product.location;
+    }
 
     final StaticMapProvider staticMapProvider =
         StaticMapProvider(AppConfig.mapsAPI);
