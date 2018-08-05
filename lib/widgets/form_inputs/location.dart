@@ -76,21 +76,21 @@ class _LocationInputState extends State<LocationInput> {
           LocationData(address: address, latitude: lat, longitude: lng);
     }
 
-    final StaticMapProvider staticMapProvider =
-        StaticMapProvider(AppConfig.mapsAPI);
-    final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers(
-      [
-        Marker('postion', 'Postion', _locationData.latitude,
-            _locationData.longitude)
-      ],
-      center: Location(_locationData.latitude, _locationData.longitude),
-      width: 500,
-      height: 300,
-      maptype: StaticMapViewType.roadmap,
-    );
-
-    widget.setLocation(_locationData);
     if (mounted) {
+      final StaticMapProvider staticMapProvider =
+          StaticMapProvider(AppConfig.mapsAPI);
+      final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers(
+        [
+          Marker('postion', 'Postion', _locationData.latitude,
+              _locationData.longitude)
+        ],
+        center: Location(_locationData.latitude, _locationData.longitude),
+        width: 500,
+        height: 300,
+        maptype: StaticMapViewType.roadmap,
+      );
+
+      widget.setLocation(_locationData);
       setState(() {
         _addressInputController.text = _locationData.address;
         _staticMapUri = staticMapUri;
