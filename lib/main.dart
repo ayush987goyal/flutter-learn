@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-// import 'package:map_view/map_view.dart';
+import 'package:map_view/map_view.dart';
 
-// import './app_config.dart';
+import './app_config.dart';
 import './pages/auth.dart';
 import './pages/products.dart';
 import './pages/product.dart';
@@ -11,7 +11,7 @@ import './scoped-models/main.dart';
 import './models/product.dart';
 
 void main() {
-  // MapView.setApiKey(AppConfig.mapsAPI); //! Required for iOS
+  MapView.setApiKey(AppConfig.mapsAPI); //! Required for iOS
   runApp(MyApp());
 }
 
