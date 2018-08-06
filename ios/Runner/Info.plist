@@ -29,6 +29,10 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<key>NSLocationWhenInUseUsageDescription</key>
     <string>User location is required to add a product location</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Image is used as a product image.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Image is used as a product image.</string>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
