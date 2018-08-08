@@ -24,11 +24,26 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'location': null
   };
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final _titleTextController = TextEditingController();
+  final _descriptionTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
+    if (product == null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = '';
+    } else if (product != null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = product.title;
+    } else if (product == null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else if (product == null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else {
+      _titleTextController.text = '';
+    }
+
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Title'),
-      initialValue: product == null ? '' : product.title,
+      controller: _titleTextController,
+      // initialValue: product == null ? '' : product.title,
       validator: (String value) {
         if (value.isEmpty || value.length < 5) {
           return 'Title is required and should be 5+ characters long.';
@@ -41,10 +56,18 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
+    if (product == null && _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = '';
+    } else if (product != null &&
+        _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = product.description;
+    }
+
     return TextFormField(
       maxLines: 4,
       decoration: InputDecoration(labelText: 'Product Description'),
-      initialValue: product == null ? '' : product.description,
+      controller: _descriptionTextController,
+      // initialValue: product == null ? '' : product.description,
       validator: (String value) {
         if (value.isEmpty || value.length < 10) {
           return 'Description is required and should be 10+ characters long.';
@@ -143,8 +166,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
     _formKey.currentState.save();
     selectedProductIndex == -1
         ? addProduct(
-            _formData['title'],
-            _formData['description'],
+            _titleTextController.text,
+            _descriptionTextController.text,
             _formData['price'],
             _formData['image'],
             _formData['location'],
@@ -171,8 +194,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
             }
           })
         : updateProduct(
-            _formData['title'],
-            _formData['description'],
+            _titleTextController.text,
+            _descriptionTextController.text,
             _formData['price'],
             _formData['image'],
             _formData['location'],
