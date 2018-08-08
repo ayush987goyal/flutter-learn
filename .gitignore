@@ -8,5 +8,8 @@ build/
 
 .flutter-plugins
 
+functions/node_modules
+*.log
+
 lib/app_config.dart
 android/app/src/main/AndroidManifest.xml
