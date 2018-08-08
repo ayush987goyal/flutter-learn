@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../app_config.dart';
 import '../models/product.dart';
@@ -55,8 +58,56 @@ class ProductsModel extends ConnectedProductsModel {
           });
   }
 
+  Future<Map<String, dynamic>> uploadImage(File image,
+      {String imagePath}) async {
+    final mimeTypeData = lookupMimeType(image.path).split('/');
+    final imageUploadRequest = http.MultipartRequest(
+      'POST',
+      Uri.parse(
+          'https://console.firebase.google.com/project/flutter-products-6fdce/overview'),
+    );
+    final file = await http.MultipartFile.fromPath(
+      'image',
+      imagePath,
+      contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
+    );
+    imageUploadRequest.files.add(file);
+    if (imagePath != null) {
+      imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
+    }
+    imageUploadRequest.headers['Authorization'] =
+        'Bearer ${_authenticatedUser.token}';
+
+    try {
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        print('Something went wrong');
+        print(jsonDecode(response.body));
+        return null;
+      }
+      final responseData = jsonDecode(response.body);
+      return responseData;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
   Future<bool> addProduct(String title, String description, double price,
-      String image, LocationData locData) async {
+      File image, LocationData locData) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final uploadData = await uploadImage(image);
+
+    if (uploadData == null) {
+      print('Upload failed!');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -65,13 +116,13 @@ class ProductsModel extends ConnectedProductsModel {
           'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
+      'imagePath': uploadData['imagePath'],
+      'imageUrl': uploadData['imageUrl'],
       'loc_lat': locData.latitude,
       'loc_lng': locData.longitude,
       'loc_address': locData.address
     };
 
-    _isLoading = true;
-    notifyListeners();
     try {
       final http.Response response = await http.post(
           'https://flutter-products-6fdce.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
@@ -88,7 +139,7 @@ class ProductsModel extends ConnectedProductsModel {
           title: title,
           description: description,
           price: price,
-          image: image,
+          image: uploadData['imageUrl'],
           location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
