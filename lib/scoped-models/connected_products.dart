@@ -138,6 +138,7 @@ class ProductsModel extends ConnectedProductsModel {
           description: description,
           price: price,
           image: uploadData['imageUrl'],
+          imagePath: uploadData['imagePath'],
           location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
@@ -239,6 +240,7 @@ class ProductsModel extends ConnectedProductsModel {
           description: productData['description'],
           price: productData['price'],
           image: productData['imageUrl'],
+          imagePath: productData['imagePath'],
           location: LocationData(
             address: productData['loc_address'],
             latitude: productData['loc_lat'],
@@ -279,6 +281,7 @@ class ProductsModel extends ConnectedProductsModel {
       description: selectedProduct.description,
       price: selectedProduct.price,
       image: selectedProduct.image,
+      imagePath: selectedProduct.imagePath,
       location: selectedProduct.location,
       userEmail: selectedProduct.userEmail,
       userId: selectedProduct.userId,
@@ -305,6 +308,7 @@ class ProductsModel extends ConnectedProductsModel {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        imagePath: selectedProduct.imagePath,
         location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
