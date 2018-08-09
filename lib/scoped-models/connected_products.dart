@@ -154,13 +154,31 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   Future<bool> updateProduct(String title, String description, double price,
-      String image, LocationData locData) {
+      File image, LocationData locData) async {
+    _isLoading = true;
+    notifyListeners();
+
+    String imageUrl = selectedProduct.image;
+    String imagePath = selectedProduct.imagePath;
+    if (image != null) {
+      final uploadData = await uploadImage(image);
+      if (uploadData == null) {
+        print('Upload failed!');
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      imageUrl = uploadData['imageUrl'];
+      imagePath = uploadData['imagePath'];
+    }
+
     final Map<String, dynamic> updateData = {
       'title': title,
       'description': description,
       'price': price,
-      'image':
-          'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
+      'imageUrl': imageUrl,
+      'imagePath': imagePath,
       'userEmail': selectedProduct.userEmail,
       'userId': selectedProduct.userId,
       'loc_lat': locData.latitude,
@@ -168,21 +186,18 @@ class ProductsModel extends ConnectedProductsModel {
       'loc_address': locData.address
     };
 
-    _isLoading = true;
-    notifyListeners();
-    return http
-        .put(
-            'https://flutter-products-6fdce.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
-            body: jsonEncode(updateData))
-        .then((http.Response response) {
+    try {
+      final http.Response response = await http.put(
+          'https://flutter-products-6fdce.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
+          body: jsonEncode(updateData));
       final Product updatedProduct = Product(
         id: selectedProduct.id,
         title: title,
         description: description,
         price: price,
         location: locData,
-        image:
-            'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
+        image: imageUrl,
+        imagePath: imagePath,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
       );
@@ -191,11 +206,11 @@ class ProductsModel extends ConnectedProductsModel {
       _isLoading = false;
       notifyListeners();
       return true;
-    }).catchError((error) {
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
-    });
+    }
   }
 
   Future<bool> deleteProduct() {

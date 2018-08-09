@@ -24,8 +24,8 @@ class _ImageInputState extends State<ImageInput> {
     ImagePicker.pickImage(source: source, maxWidth: 400.0).then((File image) {
       setState(() {
         _imageFile = image;
-        widget.setImage(image);
       });
+      widget.setImage(image);
       Navigator.pop(context);
     });
   }
@@ -69,6 +69,24 @@ class _ImageInputState extends State<ImageInput> {
   @override
   Widget build(BuildContext context) {
     final buttonColor = Theme.of(context).primaryColor;
+    Widget previewImage = Text('Please pick an image.');
+    if (_imageFile != null) {
+      previewImage = Image.file(
+        _imageFile,
+        fit: BoxFit.cover,
+        height: 300.0,
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.topCenter,
+      );
+    } else if (widget.product != null) {
+      previewImage = Image.network(
+        widget.product.image,
+        fit: BoxFit.cover,
+        height: 300.0,
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.topCenter,
+      );
+    }
 
     return Column(
       children: <Widget>[
@@ -102,15 +120,7 @@ class _ImageInputState extends State<ImageInput> {
         SizedBox(
           height: 10.0,
         ),
-        _imageFile == null
-            ? Text('Please pick an image.')
-            : Image.file(
-                _imageFile,
-                fit: BoxFit.cover,
-                height: 300.0,
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.topCenter,
-              ),
+        previewImage,
       ],
     );
   }

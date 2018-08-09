@@ -34,7 +34,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       _titleTextController.text = '';
     } else if (product != null && _titleTextController.text.trim() == '') {
       _titleTextController.text = product.title;
-    } else if (product == null && _titleTextController.text.trim() != '') {
+    } else if (product != null && _titleTextController.text.trim() != '') {
       _titleTextController.text = _titleTextController.text;
     } else if (product == null && _titleTextController.text.trim() != '') {
       _titleTextController.text = _titleTextController.text;
