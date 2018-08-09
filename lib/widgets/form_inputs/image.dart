@@ -24,8 +24,8 @@ class _ImageInputState extends State<ImageInput> {
     ImagePicker.pickImage(source: source, maxWidth: 400.0).then((File image) {
       setState(() {
         _imageFile = image;
+        widget.setImage(image);
       });
-      widget.setImage(image);
       Navigator.pop(context);
     });
   }

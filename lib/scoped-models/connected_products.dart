@@ -64,11 +64,11 @@ class ProductsModel extends ConnectedProductsModel {
     final imageUploadRequest = http.MultipartRequest(
       'POST',
       Uri.parse(
-          'https://console.firebase.google.com/project/flutter-products-6fdce/overview'),
+          'https://us-central1-flutter-products-6fdce.cloudfunctions.net/storeImage'),
     );
     final file = await http.MultipartFile.fromPath(
       'image',
-      imagePath,
+      image.path,
       contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
     );
     imageUploadRequest.files.add(file);
@@ -112,8 +112,6 @@ class ProductsModel extends ConnectedProductsModel {
       'title': title,
       'description': description,
       'price': price,
-      'image':
-          'https://cms.qz.com/wp-content/uploads/2017/04/india-chocolate-market.jpg?quality=80&strip=all&w=1600',
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
       'imagePath': uploadData['imagePath'],
@@ -240,7 +238,7 @@ class ProductsModel extends ConnectedProductsModel {
           title: productData['title'],
           description: productData['description'],
           price: productData['price'],
-          image: productData['image'],
+          image: productData['imageUrl'],
           location: LocationData(
             address: productData['loc_address'],
             latitude: productData['loc_lat'],
