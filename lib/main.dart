@@ -3,13 +3,16 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:map_view/map_view.dart';
 
 import './app_config.dart';
+import './shared/adaptive_theme.dart';
+
 import './pages/auth.dart';
 import './pages/products.dart';
 import './pages/product.dart';
 import './pages/products_admin.dart';
+import './widgets/helpers/custom_route.dart';
+
 import './scoped-models/main.dart';
 import './models/product.dart';
-import './widgets/helpers/custom_route.dart';
 
 void main() {
   MapView.setApiKey(AppConfig.mapsAPI); //! Required for iOS
@@ -44,12 +47,7 @@ class _MyAppState extends State<MyApp> {
       model: _model,
       child: MaterialApp(
         // debugShowMaterialGrid: true,
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: Colors.deepOrange,
-          accentColor: Colors.deepPurple,
-          buttonColor: Colors.deepPurple,
-        ),
+        theme: getAdaptiveThemeData(context),
         // home: AuthPage(),
         routes: {
           '/': (BuildContext context) =>
