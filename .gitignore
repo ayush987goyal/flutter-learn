@@ -14,3 +14,6 @@ functions/node_modules
 lib/app_config.dart
 android/app/src/main/AndroidManifest.xml
 functions/flutter-products.json
+
+key.jks
+key.properties
