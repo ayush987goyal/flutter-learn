@@ -5,6 +5,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/form_inputs/location.dart';
 import '../widgets/form_inputs/image.dart';
+import '../widgets/helpers/ensure_visible.dart';
 
 import '../models/product.dart';
 import '../scoped-models/main.dart';
@@ -26,6 +27,9 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'location': null
   };
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final _titleFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
+  final _priceFocusNode = FocusNode();
   final _titleTextController = TextEditingController();
   final _descriptionTextController = TextEditingController();
   final _priceTextController = TextEditingController();
@@ -43,18 +47,22 @@ class _ProductEditPageState extends State<ProductEditPage> {
       _titleTextController.text = '';
     }
 
-    return TextFormField(
-      decoration: InputDecoration(labelText: 'Product Title'),
-      controller: _titleTextController,
-      // initialValue: product == null ? '' : product.title,
-      validator: (String value) {
-        if (value.isEmpty || value.length < 5) {
-          return 'Title is required and should be 5+ characters long.';
-        }
-      },
-      onSaved: (String value) {
-        _formData['title'] = value;
-      },
+    return EnsureVisibleWhenFocused(
+      focusNode: _titleFocusNode,
+      child: TextFormField(
+        focusNode: _titleFocusNode,
+        decoration: InputDecoration(labelText: 'Product Title'),
+        controller: _titleTextController,
+        // initialValue: product == null ? '' : product.title,
+        validator: (String value) {
+          if (value.isEmpty || value.length < 5) {
+            return 'Title is required and should be 5+ characters long.';
+          }
+        },
+        onSaved: (String value) {
+          _formData['title'] = value;
+        },
+      ),
     );
   }
 
@@ -66,19 +74,23 @@ class _ProductEditPageState extends State<ProductEditPage> {
       _descriptionTextController.text = product.description;
     }
 
-    return TextFormField(
-      maxLines: 4,
-      decoration: InputDecoration(labelText: 'Product Description'),
-      controller: _descriptionTextController,
-      // initialValue: product == null ? '' : product.description,
-      validator: (String value) {
-        if (value.isEmpty || value.length < 10) {
-          return 'Description is required and should be 10+ characters long.';
-        }
-      },
-      onSaved: (String value) {
-        _formData['description'] = value;
-      },
+    return EnsureVisibleWhenFocused(
+      focusNode: _descriptionFocusNode,
+      child: TextFormField(
+        focusNode: _descriptionFocusNode,
+        maxLines: 4,
+        decoration: InputDecoration(labelText: 'Product Description'),
+        controller: _descriptionTextController,
+        // initialValue: product == null ? '' : product.description,
+        validator: (String value) {
+          if (value.isEmpty || value.length < 10) {
+            return 'Description is required and should be 10+ characters long.';
+          }
+        },
+        onSaved: (String value) {
+          _formData['description'] = value;
+        },
+      ),
     );
   }
 
@@ -89,20 +101,24 @@ class _ProductEditPageState extends State<ProductEditPage> {
       _priceTextController.text = product.price.toString();
     }
 
-    return TextFormField(
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(labelText: 'Product Price'),
-      controller: _priceTextController,
-      // initialValue: product == null ? '' : product.price.toString(),
-      validator: (String value) {
-        if (value.isEmpty ||
-            !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
-          return 'Price is required and should be a number.';
-        }
-      },
-      onSaved: (String value) {
-        _formData['price'] = double.parse(value);
-      },
+    return EnsureVisibleWhenFocused(
+      focusNode: _priceFocusNode,
+      child: TextFormField(
+        focusNode: _priceFocusNode,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(labelText: 'Product Price'),
+        controller: _priceTextController,
+        // initialValue: product == null ? '' : product.price.toString(),
+        validator: (String value) {
+          if (value.isEmpty ||
+              !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
+            return 'Price is required and should be a number.';
+          }
+        },
+        onSaved: (String value) {
+          _formData['price'] = double.parse(value);
+        },
+      ),
     );
   }
 
