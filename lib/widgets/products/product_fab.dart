@@ -17,7 +17,18 @@ class ProductFAB extends StatefulWidget {
   }
 }
 
-class _ProductFABState extends State<ProductFAB> {
+class _ProductFABState extends State<ProductFAB> with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
@@ -29,21 +40,27 @@ class _ProductFABState extends State<ProductFAB> {
               height: 70.0,
               width: 56.0,
               alignment: FractionalOffset.topCenter,
-              child: FloatingActionButton(
-                backgroundColor: Theme.of(context).cardColor,
-                heroTag: 'contact',
-                mini: true,
-                onPressed: () async {
-                  final url = 'mailto:${widget.product.userEmail}';
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    throw 'Could not launch!';
-                  }
-                },
-                child: Icon(
-                  Icons.mail,
-                  color: Theme.of(context).primaryColor,
+              child: ScaleTransition(
+                scale: CurvedAnimation(
+                  parent: _controller,
+                  curve: Interval(0.0, 1.0, curve: Curves.easeOut),
+                ),
+                child: FloatingActionButton(
+                  backgroundColor: Theme.of(context).cardColor,
+                  heroTag: 'contact',
+                  mini: true,
+                  onPressed: () async {
+                    final url = 'mailto:${widget.product.userEmail}';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch!';
+                    }
+                  },
+                  child: Icon(
+                    Icons.mail,
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
               ),
             ),
@@ -51,25 +68,37 @@ class _ProductFABState extends State<ProductFAB> {
               height: 70.0,
               width: 56.0,
               alignment: FractionalOffset.topCenter,
-              child: FloatingActionButton(
-                backgroundColor: Theme.of(context).cardColor,
-                heroTag: 'favorite',
-                mini: true,
-                onPressed: () {
-                  model.toggleProductFavoriteStatus();
-                },
-                child: Icon(
-                  model.selectedProduct.isFavorite
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: Colors.red,
+              child: ScaleTransition(
+                scale: CurvedAnimation(
+                  parent: _controller,
+                  curve: Interval(0.0, 0.5, curve: Curves.easeOut),
+                ),
+                child: FloatingActionButton(
+                  backgroundColor: Theme.of(context).cardColor,
+                  heroTag: 'favorite',
+                  mini: true,
+                  onPressed: () {
+                    model.toggleProductFavoriteStatus();
+                  },
+                  child: Icon(
+                    model.selectedProduct.isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: Colors.red,
+                  ),
                 ),
               ),
             ),
             Container(
               child: FloatingActionButton(
                 heroTag: 'options',
-                onPressed: () {},
+                onPressed: () {
+                  if (_controller.isDismissed) {
+                    _controller.forward();
+                  } else {
+                    _controller.reverse();
+                  }
+                },
                 child: Icon(Icons.more_vert),
               ),
             ),
