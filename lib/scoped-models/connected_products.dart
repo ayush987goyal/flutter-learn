@@ -187,7 +187,7 @@ class ProductsModel extends ConnectedProductsModel {
     };
 
     try {
-      final http.Response response = await http.put(
+      await http.put(
           'https://flutter-products-6fdce.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
           body: jsonEncode(updateData));
       final Product updatedProduct = Product(
@@ -221,7 +221,7 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://flutter-products-6fdce.firebaseio.com/products/${deletedProductId}.json?auth=${_authenticatedUser.token}')
+            'https://flutter-products-6fdce.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -233,8 +233,11 @@ class ProductsModel extends ConnectedProductsModel {
     });
   }
 
-  Future<Null> fetchProducts({onlyForUser = false}) {
+  Future<Null> fetchProducts({onlyForUser = false, clearExisiting = false}) {
     _isLoading = true;
+    if (clearExisiting) {
+      _products = [];
+    }
     notifyListeners();
     return http
         .get(
